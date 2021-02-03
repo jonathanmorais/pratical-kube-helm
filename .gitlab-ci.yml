@@ -27,3 +27,4 @@ dev:build:docker:
       PASSWORD: $DOCKER_CREDENTIAL  
       DOCKER_REGISTRY: $DOCKER_REGISTRY
       DOCKERFILE: Dockerfile
+      
