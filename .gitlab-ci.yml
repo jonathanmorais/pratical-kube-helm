@@ -5,9 +5,9 @@ variables:
     DOCKER_REGISTRY: $DOCKER_REGISTRY
     DOCKER_CREDENTIAL: $DOCKER_CREDENTIAL
   
-  stages:
+stages:
     - docker
-  
+
 .template_docker: &template_docker
     stage: docker
     image: wedneyyuri/awscli-dind
