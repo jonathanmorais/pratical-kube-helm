@@ -1,0 +1,29 @@
+variables:
+    PWD: $PWD
+    CI_DIR: ./
+    CI_PRIMARY: /
+    DOCKER_REGISTRY: $DOCKER_REGISTRY
+    DOCKER_CREDENTIAL: $DOCKER_CREDENTIAL
+  
+  stages:
+    - docker
+  
+.template_docker: &template_docker
+    stage: docker
+    image: wedneyyuri/awscli-dind
+    services:
+        - docker:18.09-dind
+    script:
+        - cd docker/
+        - export TAG=${CI_COMMIT_SHORT_SHA}
+        - docker build -t ${DOCKER_REGISTRY}:${TAG} -f ${DOCKERFILE} ..
+        - docker push ${DOCKER_REGISTRY}:${TAG}
+  
+dev:build:docker:
+    <<: *template_docker
+    only:
+      - tags
+    variables:
+      PASSWORD: $DOCKER_CREDENTIAL  
+      DOCKER_REGISTRY: $DOCKER_REGISTRY
+      DOCKERFILE: Dockerfile
