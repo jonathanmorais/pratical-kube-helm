@@ -2,9 +2,10 @@ variables:
     PWD: $PWD
     CI_DIR: ./
     CI_PRIMARY: /
-    DOCKER_REGISTRY: $DOCKER_REGISTRY
+    DOCKER_REGISTRY: $DOCKER_USER
     DOCKER_CREDENTIAL: $DOCKER_CREDENTIAL
-    DOCKER_USER: $DOCKER_USER 
+    DOCKER_USER: $DOCKER_USER
+    TAG_IMAGE: "v0.0.1" 
   
 stages:
     - docker
@@ -18,8 +19,8 @@ stages:
         - docker login --username=$DOCKER_USER --password=$DOCKER_CREDENTIAL
         - cd docker/
         - export TAG=${CI_COMMIT_SHORT_SHA}
-        - docker build -t ${DOCKER_REGISTRY}/${SERVICE}:${TAG} -f ${DOCKERFILE} ..
-        - docker push ${DOCKER_REGISTRY}/${SERVICE}:${TAG}
+        - docker build -t ${DOCKER_REGISTRY}/${SERVICE}:${TAG_IMAGE} -f ${DOCKERFILE} ..
+        - docker push ${DOCKER_REGISTRY}/${SERVICE}:${TAG_IMAGE}
   
 dev:build:docker:
     <<: *template_docker
