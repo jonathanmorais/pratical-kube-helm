@@ -16,14 +16,15 @@ stages:
     script:
         - cd docker/
         - export TAG=${CI_COMMIT_SHORT_SHA}
-        - docker build -t ${DOCKER_REGISTRY}:${TAG} -f ${DOCKERFILE} ..
-        - docker push ${DOCKER_REGISTRY}:${TAG}
+        - docker build -t ${DOCKER_REGISTRY}/${SERVICE}:${TAG} -f ${DOCKERFILE} ..
+        - docker push ${DOCKER_REGISTRY}/${SERVICE}:${TAG}
   
 dev:build:docker:
     <<: *template_docker
     only:
-      - tags
+      - main
     variables:
       PASSWORD: $DOCKER_CREDENTIAL  
       DOCKER_REGISTRY: $DOCKER_REGISTRY
       DOCKERFILE: Dockerfile
+      SERVICE: "potency"
