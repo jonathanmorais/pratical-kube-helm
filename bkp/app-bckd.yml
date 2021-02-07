@@ -16,6 +16,7 @@ spec:
     spec:
       containers:
       - name: {{ .Release.Name }}
-        image: {{ .Release.Name }}:1.14.2
+        image: {{ .Release.Name }}:v0.0.1
         ports:
-        - containerPort: 80
+        - containerPort: 5000
+    

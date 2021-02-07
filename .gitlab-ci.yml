@@ -9,6 +9,7 @@ variables:
   
 stages:
     - docker
+    - deploy
 
 .template_docker: &template_docker
     stage: docker
@@ -31,3 +32,15 @@ dev:build:docker:
       DOCKER_REGISTRY: $DOCKER_USER
       DOCKERFILE: Dockerfile
       SERVICE: "potency"
+
+dev:deploy:helm:
+    stage: deploy
+    image: alpine/helm
+    only:
+      - main
+    variables:
+      PASSWORD: $DOCKER_CREDENTIAL  
+      DOCKER_REGISTRY: $DOCKER_USER
+      DOCKERFILE: Dockerfile
+      SERVICE: "potency"
+    
