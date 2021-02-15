@@ -5,10 +5,12 @@ variables:
     DOCKER_REGISTRY: $DOCKER_USER
     DOCKER_CREDENTIAL: $DOCKER_CREDENTIAL
     DOCKER_USER: $DOCKER_USER
-    TAG_IMAGE: "v0.0.1" 
+    TAG_IMAGE: "v0.0.1"
+    HELM_REPO: $HELM_REPO 
   
 stages:
     - docker
+    - package
     - deploy
 
 .template_docker: &template_docker
@@ -22,7 +24,11 @@ stages:
         - export TAG=${CI_COMMIT_SHORT_SHA}
         - docker build -t ${DOCKER_REGISTRY}/${SERVICE}:${TAG_IMAGE} -f ${DOCKERFILE} ..
         - docker push ${DOCKER_REGISTRY}/${SERVICE}:${TAG_IMAGE}
-  
+
+.template_helm: &template_helm
+    stage: package
+    image: alpine/helm
+      
 dev:build:docker:
     <<: *template_docker
     only:
@@ -32,6 +38,17 @@ dev:build:docker:
       DOCKER_REGISTRY: $DOCKER_USER
       DOCKERFILE: Dockerfile
       SERVICE: "potency"
+
+dev:package:helm:
+  <<: *template_helm
+  only:
+    - main
+  variables:
+    HELM_REPO: $HELM_REPO  
+  script:
+    - cd infra/helm/app-potency
+    - helm package app-potency
+    - helm repo index --url ${HELM_REPO}  
 
 dev:deploy:helm:
     stage: deploy
@@ -43,4 +60,6 @@ dev:deploy:helm:
       DOCKER_REGISTRY: $DOCKER_USER
       DOCKERFILE: Dockerfile
       SERVICE: "potency"
+    script:
+          
     
