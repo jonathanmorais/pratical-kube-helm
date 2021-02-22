@@ -1,7 +1,5 @@
 variables:
     PWD: $PWD
-    CI_DIR: ./
-    CI_PRIMARY: /
     DOCKER_REGISTRY: $DOCKER_USER
     DOCKER_CREDENTIAL: $DOCKER_CREDENTIAL
     DOCKER_USER: $DOCKER_USER
@@ -28,6 +26,8 @@ stages:
 .template_helm: &template_helm
     stage: package
     image: alpine/helm
+    script:
+      - helm install -f ./infra/helm/app-potency/values.yaml ${ENV}-${SERVICE} ./infra/helm/app-potency/
       
 dev:build:docker:
     <<: *template_docker
@@ -48,7 +48,7 @@ dev:package:helm:
   script:
     - cd infra/helm/app-potency
     - helm package app-potency
-    - helm repo index --url ${HELM_REPO}  
+    - helm repo index --url ${HELM_REPO}
 
 dev:deploy:helm:
     stage: deploy
@@ -56,10 +56,6 @@ dev:deploy:helm:
     only:
       - main
     variables:
-      PASSWORD: $DOCKER_CREDENTIAL  
-      DOCKER_REGISTRY: $DOCKER_USER
-      DOCKERFILE: Dockerfile
+      ENV: "dev"
       SERVICE: "potency"
-    script:
-          
     
